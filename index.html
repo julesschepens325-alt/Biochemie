@@ -138,30 +138,35 @@ body {
 <script>
 const data = [
   { chapter: "H3 – Aminozuren", begrippen: [
-    { term: "Iso-elektrisch punt van een eiwit", uitleg: "Het iso-elektrisch punt (pI) is de pH waarbij een molecule een netto lading van nul heeft. Bij deze pH is de som van alle positieve ladingen (van basische zijketens en vrije aminogroepen) gelijk aan de som van alle negatieve ladingen (van zure zijketens en vrije carboxylgroepen). Op het pI is de elektroforetische mobiliteit minimaal en is het eiwit het minst oplosbaar. Het pI wordt bepaald als het rekenkundige gemiddelde van de pKa-waarden rondom de neutrale toestand van het eiwit."
-    <table>
+    {
+  term: "Iso-elektrisch punt van een eiwit",
+  uitleg: `
+Het iso-elektrisch punt (pI) is de pH waarbij een molecule een netto lading van nul heeft. Bij deze pH is de som van alle positieve ladingen gelijk aan de som van alle negatieve ladingen.
+
+<table>
   <tr>
-    <th>pH </th>
-    <th>Dominante vorm </th>
+    <th>pH</th>
+    <th>Dominante vorm</th>
     <th>Lading</th>
   </tr>
   <tr>
-    <td> <2,3 </td>
-    <td> -COOH, -NH3+ </td>
-    <td>  </td>
+    <td>&lt; 2,3</td>
+    <td>-COOH, -NH3+</td>
+    <td>+1</td>
   </tr>
   <tr>
-    <td> 2,3-9,6 </td>
-    <td> -COO-, -NH3+ </td>
-    <td> 0 </td>
+    <td>2,3 - 9,6</td>
+    <td>-COO-, -NH3+</td>
+    <td>0</td>
   </tr>
   <tr>
-    <td>Rij >9,6 </td>
-    <td>  -COO-, -NH2 </td>
-    <td> -1 </td>
+    <td>&gt; 9,6</td>
+    <td>-COO-, -NH2</td>
+    <td>-1</td>
   </tr>
 </table>
-    },
+`
+},
     { term: "Prosthetische groep", uitleg: "Een prosthetische groep is een niet-eiwitachtige cofactor die covalent of sterk niet-covalent gebonden is aan een eiwit (apoenzym) en noodzakelijk is voor de biologische functie ervan. Samen vormen het apoenzym en de prosthetische groep het holoenzym. Voorbeelden zijn het heem-groep in hemoglobine en myoglobine (een ijzerhoudend porfyrinederivaat), FAD in succcinaatdehydrogenase, en biotine in carboxylases." },
     { term: "Specifieke enzymactiviteit", uitleg: "De specifieke activiteit is een maat voor de zuiverheid van een enzympreparaat. Ze wordt uitgedrukt als het aantal eenheden enzymactiviteit per milligram totaal eiwit (U/mg of µmol/min/mg). Naarmate het enzym gezuiverder wordt, stijgt de specifieke activiteit. De maximale specifieke activiteit correspondeert met een zuiver enzym. Het is dus een praktische parameter bij de opzuivering van enzymen." },
     { term: "Homologie van eiwitten (paraloog, ortholoog)", uitleg: "Homologe eiwitten delen een gemeenschappelijke evolutionaire oorsprong, wat tot uiting komt in gelijkende aminozuursequenties en structuren. Orthologiese eiwitten zijn homologen die in verschillende soorten voorkomen als gevolg van speciatie; ze vervullen doorgaans dezelfde functie (bv. hemoglobine in mens en muis). Paralogische eiwitten zijn homologen binnen dezelfde soort, ontstaan door geduplicatie van een voorouderlijk gen; ze kunnen gediversifieerde functies hebben (bv. myoglobine en hemoglobine in de mens)." },
