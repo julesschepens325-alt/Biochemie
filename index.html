@@ -1,0 +1,287 @@
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --page-bg: #f6f8fc;
+  --card-bg: #ffffff;
+  --card-bg-soft: #f8fafc;
+  --text-main: #152033;
+  --text-soft: #52607a;
+  --border: #d9e2f0;
+  --border-strong: #b9c7da;
+  --accent: #3b82f6;
+  --accent-soft: rgba(59, 130, 246, 0.10);
+  --shadow: 0 10px 30px rgba(21, 32, 51, 0.08);
+}
+body {
+  font-family: var(--font-sans);
+  background: linear-gradient(180deg, #eef4ff 0%, var(--page-bg) 220px);
+  color: var(--text-main);
+  line-height: 1.6;
+}
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1.25rem 1rem 2rem;
+}
+.search-box {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  margin-bottom: 1rem;
+  background: var(--card-bg);
+  color: var(--text-main);
+  box-shadow: 0 2px 8px rgba(21, 32, 51, 0.04);
+}
+.search-box:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-soft);
+}
+.chapter-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 1.25rem;
+}
+.ch-btn {
+  font-size: 12px;
+  padding: 7px 12px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--card-bg);
+  color: var(--text-soft);
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.ch-btn:hover {
+  background: var(--card-bg-soft);
+  border-color: var(--border-strong);
+  transform: translateY(-1px);
+}
+.ch-btn.active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+  box-shadow: 0 8px 18px rgba(59, 130, 246, 0.22);
+  font-weight: 600;
+}
+.chapter-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 1rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: rgba(255,255,255,0.75);
+  backdrop-filter: blur(4px);
+  box-shadow: var(--shadow);
+}
+.begrip-list { display: flex; flex-direction: column; gap: 12px; }
+.begrip-card {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--card-bg);
+  box-shadow: var(--shadow);
+}
+.begrip-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 14px 16px;
+  cursor: pointer;
+  background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+  transition: background 0.15s ease, transform 0.15s ease;
+  user-select: none;
+}
+.begrip-header:hover { background: var(--card-bg-soft); }
+.begrip-term { font-size: 14px; font-weight: 600; color: var(--text-main); }
+.begrip-arrow { font-size: 12px; color: var(--text-soft); transition: transform 0.2s; }
+.begrip-arrow.open { transform: rotate(90deg); }
+.begrip-body {
+  display: none;
+  padding: 14px 16px 16px;
+  background: #f9fbff;
+  border-top: 1px solid var(--border);
+  font-size: 13.5px;
+  line-height: 1.8;
+  color: var(--text-soft);
+}
+.begrip-body.open { display: block; }
+.no-results {
+  font-size: 13px;
+  color: var(--text-soft);
+  text-align: center;
+  padding: 2rem 0;
+}
+@media (max-width: 640px) {
+  .container { padding: 0.9rem 0.75rem 1.5rem; }
+  .chapter-title { font-size: 16px; padding: 0.75rem 0.9rem; }
+  .begrip-header, .begrip-body { padding-left: 12px; padding-right: 12px; }
+}
+</style>
+
+<div class="container">
+<h2 class="sr-only">Begrippenlijst Biochemie 2021-2022 gebaseerd op Lehninger Principles of Biochemistry</h2>
+<input class="search-box" type="text" id="search" placeholder="Zoek een begrip..." oninput="filterBegrippen()" />
+<div class="chapter-nav" id="chapterNav"></div>
+<div class="chapter-title" id="chapterTitle"></div>
+<div class="begrip-list" id="begrippen"></div>
+<div class="no-results" id="noResults" style="display:none;">Geen begrippen gevonden.</div>
+</div>
+
+<script>
+const data = [
+  { chapter: "H3 – Aminozuren", begrippen: [
+    { term: "Iso-elektrisch punt van een eiwit", uitleg: "Het iso-elektrisch punt (pI) is de pH waarbij een eiwit een netto lading van nul heeft. Bij deze pH is de som van alle positieve ladingen (van basische zijketens en vrije aminogroepen) gelijk aan de som van alle negatieve ladingen (van zure zijketens en vrije carboxylgroepen). Op het pI is de elektroforetische mobiliteit minimaal en is het eiwit het minst oplosbaar. Het pI wordt bepaald als het rekenkundige gemiddelde van de pKa-waarden rondom de neutrale toestand van het eiwit." },
+    { term: "Prosthetische groep", uitleg: "Een prosthetische groep is een niet-eiwitachtige cofactor die covalent of sterk niet-covalent gebonden is aan een eiwit (apoenzym) en noodzakelijk is voor de biologische functie ervan. Samen vormen het apoenzym en de prosthetische groep het holoenzym. Voorbeelden zijn het heem-groep in hemoglobine en myoglobine (een ijzerhoudend porfyrinederivaat), FAD in succcinaatdehydrogenase, en biotine in carboxylases." },
+    { term: "Specifieke enzymactiviteit", uitleg: "De specifieke activiteit is een maat voor de zuiverheid van een enzympreparaat. Ze wordt uitgedrukt als het aantal eenheden enzymactiviteit per milligram totaal eiwit (U/mg of µmol/min/mg). Naarmate het enzym gezuiverder wordt, stijgt de specifieke activiteit. De maximale specifieke activiteit correspondeert met een zuiver enzym. Het is dus een praktische parameter bij de opzuivering van enzymen." },
+    { term: "Homologie van eiwitten (paraloog, ortholoog)", uitleg: "Homologe eiwitten delen een gemeenschappelijke evolutionaire oorsprong, wat tot uiting komt in gelijkende aminozuursequenties en structuren. Orthologiese eiwitten zijn homologen die in verschillende soorten voorkomen als gevolg van speciatie; ze vervullen doorgaans dezelfde functie (bv. hemoglobine in mens en muis). Paralogische eiwitten zijn homologen binnen dezelfde soort, ontstaan door geduplicatie van een voorouderlijk gen; ze kunnen gediversifieerde functies hebben (bv. myoglobine en hemoglobine in de mens)." },
+    { term: "Aligneren van eiwitten", uitleg: "Het aligneren (uitlijnen) van eiwitsequenties is het naast elkaar plaatsen van aminozuursequenties om overeenkomsten en verschillen te identificeren. Algoritmen zoals BLAST of ClustalW introduceren eventueel 'gaps' om sequentie-identiteit en -homologie te maximaliseren. Goed geconserveerde regio's wijzen op functioneel of structureel belang. Meervoudige sequence-alignments (MSA) vergelijken tegelijkertijd meerdere sequenties en vormen de basis voor fylogenetische analyses en identificatie van signatuursequenties." },
+    { term: "Signatuursequentie", uitleg: "Een signatuursequentie (ook: sequentiemotief) is een kort, karakteristiek geconserveerd patroon van aminozuren in een eiwit dat diagnostisch is voor een bepaalde eiwitfamilie of functie. Signatuursequenties worden geïdentificeerd via databases zoals PROSITE. Zo heeft het ATP-bindende P-loop motief de consensus GxxxxGKS/T. Signatuursequenties laten toe onbekende eiwitten in te delen in functionele families op basis van sequentie-informatie alleen." },
+  ]},
+  { chapter: "H4 – 3D eiwitten", begrippen: [
+    { term: "Eiwitconformatie", uitleg: "De conformatie van een eiwit is de driedimensionale rangschikking van alle atomen in de eiwitketen, zoals bepaald door de rotatie rond enkelvoudige bindingen in het polypeptideskelet en de zijketens. De natieve conformatie is de biologisch actieve toestand met de laagste vrije energie. Ze wordt gestabiliseerd door niet-covalente interacties (H-bruggen, hydrofobe interacties, ionische interacties, van-der-Waalskrachten) en soms door covalente disulfidebindingen." },
+    { term: "Fibrillaire eiwitten", uitleg: "Fibrillaire (vezelachtige) eiwitten hebben een langwerpige, herhaalde structuur en vervullen voornamelijk structurele functies. Ze zijn onoplosbaar in water. Voorbeelden: α-keratine (haar, nagels) heeft een rechtsgaande α-helixstructuur die door waterstofbruggen is gestabiliseerd; collageen heeft een linkshandige poly-Pro-II helix die drie ketens in een rechtshandige superhelix samenhoudt; fibroine (zijde) bestaat uit antiparallelle β-platen. Dit staat in contrast met globulaire eiwitten, die compact en wateroplosbaar zijn." },
+    { term: "Eiwitmotief / domein", uitleg: "Een suprasecundair motief is een terugkerende combinatie van secundaire structuurelementen (bv. βαβ, helix-loop-helix, leucinerits). Een eiwitdomein is een groter, stabiel, onafhankelijk vouwend functioneel en structureel eenheid van een polypeptide; het kan onafhankelijk bestaan en een specifieke functie uitvoeren. Domeinen worden vaak geassocieerd met specifieke functies zoals bindingsplaatsen of katalytische activiteit. Multidomeineiwit­ten kunnen meerdere functies combineren." },
+    { term: "Proteostase", uitleg: "Proteostase (proteïne homeostase) verwijst naar de cellulaire processen die de concentratie, vouwingstoestand, lokalisatie en afbraak van eiwitten in balans houden. Het netwerk omvat ribosomen (synthese), chaperones (vouwen en kwaliteitscontrole), het ubiquitine-proteasoomsysteem en autofagie (afbraak). Verstoorde proteostase ligt aan de basis van ziekten zoals Alzheimer (amyloïde aggregatie) en cystische fibrose. Chaperones herkennen blootgestelde hydrofobe regio's van niet of fout gevouwen eiwitten." },
+    { term: "Eiwitdenaturatie", uitleg: "Denaturatie is het verlies van de natieve hogere orde structuur (secundair, tertiair, quaternair) van een eiwit zonder breuk van de peptidebindingen, resulterend in verlies van biologische activiteit. Ze kan worden veroorzaakt door hitte, extreme pH, detergentia (SDS), chaotrope reagentia (ureum, guanidiniumchloride) of organische solventen. Denaturatie doorbreekt de niet-covalente interacties die de conformatie stabiliseren. Onder bepaalde condities is denaturatie reversibel (renaturatie), wat aantoont dat de sequentie de structuur bepaalt (Anfinsen-experiment)." },
+    { term: "Chaperones", uitleg: "Moleculaire chaperones zijn eiwitten die de correcte vouwing en assemblage van andere eiwitten begeleiden zonder zelf deel uit te maken van het eindproduct. Ze herkennen en binden blootgestelde hydrofobe regio's van gedeeltelijk ontvouwen eiwitten, waardoor aggregatie wordt voorkomen. Voorbeelden zijn Hsp70 (bindt co-translationeel en stressgeïnduceerd), Hsp60/GroEL-GroES (tonvormige complexen die een beschermde vouwingsruimte bieden) en Hsp90. Ze zijn ATP-afhankelijk en worden verhoogd tot expressie gebracht als hitteshockproteïnen bij celstress." },
+  ]},
+  { chapter: "H6 – Enzymen", begrippen: [
+    { term: "E.C. nummer voor enzymen", uitleg: "Het Enzyme Commission (E.C.) nummeringssysteem classificeert enzymen hiërarchisch op basis van het type reactie dat ze katalyseren. Het bestaat uit vier getallen (bv. EC 2.7.1.1): het eerste getal geeft de hoofdklasse (1=oxidoreductases, 2=transferases, 3=hydrolasen, 4=lyases, 5=isomerasen, 6=ligases), het tweede de subklasse, het derde de sub-subklasse en het vierde het serienummer. EC 2.7.1.1 is hexokinase: transferase, fosforyleert een hydroxylgroep op glucose." },
+    { term: "Reactiesnelheid en reactie-evenwicht", uitleg: "De reactiesnelheid geeft aan hoe snel producten worden gevormd; bij enzymen is dit afhankelijk van [S], Km en Vmax (Michaelis-Menten kinetiek). Het reactie-evenwicht (Keq) beschrijft de verhouding van product- en substraatconcentraties bij thermodynamisch evenwicht: Keq = [P]/[S]. Enzymen veranderen de snelheid waarmee evenwicht wordt bereikt, maar niet de waarde van Keq zelf. ΔG°' = -RT ln Keq. Een enzym verlaagt de activeringsenergie maar verschuift het evenwicht niet." },
+    { term: "Transitietoestand", uitleg: "De transitietoestand (activeringscomplex) is de hoogst-energetische, instabiele configuratie die reageerende moleculen moeten bereiken tijdens een chemische reactie. De vrije energie die nodig is om de transitietoestand te bereiken vanuit het substraat is de activeringsenergie (ΔG‡). Enzymen stabiliseren de transitietoestand door specifieke niet-covalente interacties, waardoor ΔG‡ daalt en de reactiesnelheid toeneemt. Transitionstate analogen binden extra sterk aan het actieve centrum en dienen als potente enzyminhibitoren." },
+    { term: "Steady-state condities", uitleg: "Bij steady-state (quasi-stationaire toestand) blijft de concentratie van het enzym-substraatcomplex [ES] constant: de aanmaaksnelheid is gelijk aan de afbraaksnelheid. Dit is de aanname achter de Michaelis-Menten vergelijking: v = Vmax[S]/(Km + [S]). Steady-state geldt wanneer [S] >> [E]totaal. Km is de substraatconcentratie waarbij v = Vmax/2 en is een maat voor de affiniteit van het enzym voor zijn substraat. Vmax = kcat × [E]totaal." },
+    { term: "Regulatorische enzymen", uitleg: "Regulatorische enzymen zijn enzymen waarvan de activiteit wordt gereguleerd om de flux door een metabole route te beheersen. Ze bevinden zich vaak op sleutelposities (bv. de eerste stap na een vertakking). Regulatie kan plaatsvinden via allosterie, covalente modificatie (fosforylering/defosforylering), proteolytische activering (zymogenen), of verandering in genexpressie. Ze zijn vaak ratelimiting en vertonen sigmoïdale kinetiek in plaats van hyperbolische Michaelis-Menten kinetiek." },
+    { term: "Allosterische regulatie", uitleg: "Allosterische regulatie treedt op wanneer een effectormolecuul (activator of inhibitor) bindt op een allosterische (regulatorische) plaatsen op het enzym, op afstand van het actieve centrum, en daardoor een conformatieverandering induceert die de activiteit verhoogt of verlaagt. Allosterische enzymen hebben doorgaans meerdere subeenheden en vertonen cooperativiteit (sigmoïdale v-[S]-curve, beschreven door de Hill-vergelijking). Klassiek voorbeeld: ATCase in pyrimidinesynthese, geactiveerd door ATP en geremd door CTP." },
+    { term: "Consensussequentie", uitleg: "Een consensussequentie is de meest voorkomende aminozuur- (of nucleotide-)volgorde in een positie-gewijs alignment van verwante sequenties. Elke positie geeft het meest geconserveerde residu weer. Bv. de consensussequentie voor fosforylering door PKA is Arg-Arg-x-Ser/Thr. Consensussequenties worden gebruikt om functioneel of structureel belangrijke regio's te identificeren en om voorspellingen te doen over post-translationele modificatieplaatsen of bindingssites." },
+  ]},
+  { chapter: "H7 – Koolhydraten", begrippen: [
+    { term: "Lectine", uitleg: "Lectines zijn koolhydraatbindende eiwitten (geen enzymen, geen antilichamen) die specifiek en reversibel mono- of oligosacchariden herkennen. Ze komen voor in planten (bv. ConA uit Canavalia ensiformis), dieren en micro-organismen en spelen rollen bij cel-cel-herkenning, signaaltransductie en pathogeen-gastheer-interacties. Lectines op het celoppervlak binden glycoproteine- of glycolipide-liganden op naburige cellen. Ze worden ook gebruikt als laboratoriumgereedschap om suikers te detecteren en te isoleren." },
+  ]},
+  { chapter: "H8 – Nucleotiden en nucleïnezuren", begrippen: [
+    { term: "cAMP", uitleg: "Cyclisch adenosine-3',5'-monofosfaat (cAMP) is een tweede boodschapper gevormd uit ATP door adenylylcyclase wanneer dit enzym wordt geactiveerd door een G-proteïne-gekoppelde receptor. cAMP activeert proteïnekinase A (PKA), dat doeleiwitten fosforyleert en zo cellulaire reacties initieert (bv. glycogenolyse). cAMP wordt afgebroken door fosfodiësterases tot 5'-AMP. Het cAMP-signaalpad werkt als een signaalkascade waarbij het signaal wordt versterkt." },
+  ]},
+  { chapter: "H10 – Lipiden", begrippen: [
+    { term: "Glycerofosfolipide", uitleg: "Glycerofosfolipiden zijn de meest voorkomende membraanlipiden. Ze bestaan uit een glycerol-3-fosfaat-ruggengraat waaraan twee vetzuurketens zijn veresterd op C1 en C2 (vorming van diacylglycerol) en een polair hoofdgroep (bv. choline, ethanolamine, serine, inositol) via een fosfaatester op C3. Ze zijn amfipathisch: een hydrofobe staart en een hydrofiele kop. Voorbeelden: fosfatidylcholine (lecithine), fosfatidylethanolamine, fosfatidylserine." },
+    { term: "Sfingolipide", uitleg: "Sfingolipiden zijn membraanlipiden gebouwd op sfingosine (een aminoalcohol met een lange koolstofketen) in plaats van glycerol. Een vetzuurketen is via een amidebinding verbonden met de aminogroep van sfingosine, wat ceramide oplevert. Ceramide is de gemeenschappelijke voorloper van sfingomyeline (fosfocholine-hoofdgroep) en glycosfingolipiden (suiker-hoofdgroep, bv. cerebrosiden en gangliosiden). Ze zijn geconcentreerd in lipiderafts en spelen rollen bij cel-signalering en herkenning." },
+    { term: "Prostaglandine", uitleg: "Prostaglandinen zijn lokaal werkende signaalverbindingen (eicosanoïden) afgeleid van arachidonzuur (C20:4, ω-6) via het cyclo-oxygenase (COX) pad. Ze bezitten een cyclopentaanring en twee zijketens. Prostaglandinen reguleren ontstekingsreacties, pijn, koorts, vasodilatie/-constrictie en gladde spiercontractie. Ze werken via G-proteïne-gekoppelde receptoren en hebben een korte halfwaardetijd. NSAIDs (bv. aspirine, ibuprofen) remmen COX en verminderen zo prostaglandinesynthese." },
+    { term: "Vitamine E", uitleg: "Vitamine E (α-tocoferol) is een vetoplosbaar antioxidant dat zich in membranen bevindt. Het neutraliseert vrije radicalen en reactieve zuurstofspecies (ROS) door een waterstofatoom te doneren aan lipideperoxylradicalen, waardoor ketenreacties van lipideperoxidatie worden onderbroken. Zo beschermt het meervoudig onverzadigde vetzuren in membraanlipiden tegen oxidatieve schade. Vitamine E zelf wordt daarna geregenereerd door vitamine C (ascorbaat)." },
+    { term: "Fosfolipase C", uitleg: "Fosfolipase C (PLC) is een membraangebonden enzym dat fosfatidylinositol-4,5-bisfosfaat (PIP₂) klieft in inositoltrifosfaat (IP₃) en diacylglycerol (DAG). Beide zijn tweede boodschappers: IP₃ activeert IP₃-receptoren in het endoplasmatisch reticulum en veroorzaakt Ca²⁺-vrijstelling in het cytosol; DAG activeert proteïnekinase C (PKC) aan het membraan. PLC wordt geactiveerd door Gq-proteïnen na receptorstimulatie. Dit pathway speelt een cruciale rol in cel­proliferatie, differentiatie en secretie." },
+  ]},
+  { chapter: "H11 – Membranen", begrippen: [
+    { term: "Membraan sidedness", uitleg: "Membraan sidedness (asymmetrie) verwijst naar het feit dat de twee leaflets van een biologisch membraan een verschillende lipide- en eiwitsamenstelling hebben. In de plasmamembraan: fosfatidylcholine en sfingomyeline zijn bevoordeeld in de exoplasmische (buitenste) leaflet; fosfatidylethanolamine, fosfatidylserine en PIP₂ zitten voornamelijk in de cytosolische (binnenste) leaflet. Deze asymmetrie wordt gehandhaafd door flippases en is functioneel belangrijk voor apoptosesignalering (PS-expositie) en signaaltransductie." },
+    { term: "Annulaire lipiden", uitleg: "Annulaire lipiden zijn de lipiden die direct grenzen aan en in wisselwerking staan met integraal-membraaneiwitten (de 'schil' rondom het eiwit). Ze hebben een minder mobiele, meer geordende toestand dan bulkmembraanlipiden en hebben een kortere uitwisselingstijd met het membraan dan andere lipiden. Bepaalde eiwitten vereisen specifieke lipiden in hun annulaire schil voor optimale activiteit (bv. cardiolipine voor mitochondriale eiwitten). Annulaire lipiden vormen een essentieel onderdeel van eiwit-lipide-interacties." },
+    { term: "Hydropathy plot", uitleg: "Een hydropathy plot (Kyte-Doolittle plot) is een grafische voorstelling van de hydrofobiciteit van een eiwitsequentie in functie van de positie. Voor elk aminozuur wordt een gemiddelde hydrophobiciteitswaarde berekend over een venster (typisch 7-20 aminozuren). Pieken boven een drempelwaarde (~+1.6) identificeren potentiële transmembraansegmenten (α-helices van ~20 hydrofobe aminozuren). Het wordt gebruikt om integraal membraaneiwitten en transmembraandomeinen te voorspellen." },
+    { term: "GPI-anker", uitleg: "Een glycosylfosfatidylinositol (GPI)-anker is een lipideanker dat bepaalde membraaneiwitten covalent verbindt met de exoplasmische leaflet van de plasmamembraan via een fosfatidylinositol-glycanstructuur. GPI-verankerde eiwitten worden in het endoplasmatisch reticulum toegevoegd door een transamidase dat een C-terminale signaalpeptide vervangt. Ze zijn geassocieerd met lipiderafts. Voorbeelden: CD59, Thy-1, acetylcholinesterase. Ze kunnen worden vrijgemaakt door fosfolipase C." },
+    { term: "Flippase, floppase, scramblase", uitleg: "Deze enzymen handhaven of verstoren de lipideasymmetrie in membranen. Flippases (P4-ATPases) transporteren fosfolipiden van de exoplasmische naar de cytosolische leaflet (actief, ATP-afhankelijk, PS en PE inwaarts). Floppases (ABCA1 etc.) bewegen lipiden van cytosolisch naar exoplasmisch (ATP-afhankelijk). Scramblases zijn bidirectionele, ATP-onafhankelijke eiwitten die tijdens apoptose of activering phosphatidylserine naar buiten brengen door het verstoren van asymmetrie. PS-expositie is een signaal voor fagocyten." },
+    { term: "FRAP-techniek", uitleg: "Fluorescence Recovery After Photobleaching (FRAP) is een techniek om de laterale diffusie van lipiden of eiwitten in membranen te meten. Een gedefinieerde zone van fluorescent gelabelde moleculen wordt uitgebleekt met een intense laserpuls. Daarna wordt de fluorescentie-herstel gevolgd in de tijd, naarmate niet-gebleekte moleculen de zone inmigreren. De snelheid van herstel geeft de diffusiecoëfficiënt; de mate van herstel (mobiele fractie) geeft aan welk percentage van de moleculen vrij kan bewegen. FRAP bevestigde de vloeibaarheid van membranen." },
+    { term: "Lipiden rafts", uitleg: "Lipiderafts zijn kleine, geordende microdomeinen in membranen die verrijkt zijn met sfingolipiden, cholesterol en specifieke eiwitten (bv. GPI-verankerde eiwitten, signaaltransductie-eiwitten). Door sterke van-der-Waals-interacties tussen de verzadigde vetzuurstaarten en cholesterol zijn ze meer geordend ('liquid-ordered fase') dan de omringende disordered lipidematrix. Rafts dienen als platforms voor receptor-signalering, endocytose en pathogeen-entry. Ze zijn moeilijk direct te observeren en hun exacte grootte en levensduur zijn onderwerp van debat." },
+    { term: "Membraanpotentiaal", uitleg: "De membraanpotentiaal (Vm) is het elektrisch potentiaalverschil over een biologisch membraan, ontstaan door de ongelijke verdeling van ionen aan weerszijden. Voor cellen is de binnenzijde negatief t.o.v. buiten (typisch -60 tot -90 mV voor rusttoestand neuronen). Het wordt bepaald door de selectieve permeabiliteit van het membraan voor K⁺, Na⁺, Cl⁻ en Ca²⁺ via ionkanalen en -pompen. De Nernst-vergelijking berekent de evenwichtspotentiaal voor één ionsoort; de Goldman-Hodgkin-Katz vergelijking combineert meerdere ionen." },
+    { term: "Ionofoor", uitleg: "Een ionofoor is een klein, veelal lipofiel molecuul (vaak van bacteriële oorsprong) dat de membraanpermeabiliteit voor specifieke ionen verhoogt door ions over de hydrofobe core van het membraan te transporteren. Kanaalvormers zoals gramicidine vormen een transmembraankanaal; shuttle-ionoforen zoals valinomycine (K⁺-selectief) omsluiten het ion en diffunderen als complex door het membraan. Ionoforen verstoren de iongradiënten, ontkoppelen de oxidatieve fosforylering (bv. FCCP, DNP) en worden gebruikt als antibiotica of onderzoeksinstrumenten." },
+  ]},
+  { chapter: "H12 – Signaaltransductie", begrippen: [
+    { term: "Retinal", uitleg: "Retinal (retinaldehyde) is het chromofoor in alle visuele pigmenten (opsines). Het is een aldehyde-derivaat van retinol (vitamine A) en bestaat in twee isomere vormen. In het donker is 11-cis-retinal covalent (als Schiff-base) gebonden aan een lysineresidu van opsine, samen opsine vormend. Absorptie van een foton isomeriseert 11-cis-retinal naar all-trans-retinal, wat een conformatieverandering in opsine induceert, activering van transducine en vervolgens een visueel signaal oplevert. All-trans-retinal dissocieert en wordt geregenereerd in de retinalcyclus." },
+    { term: "Transducine", uitleg: "Transducine is een heterotrimeer G-proteïne (Gαβγ) in fotoreceptorcellen dat het signaaltransductiepad voor gezichtsvermogen koppelt. Na activering door gemeta-opsine-II (de actieve vorm na lichtabsorptie) ruilt Gα-GDP GDP in voor GTP, waarna Gα-GTP en Gβγ dissociëren. Gα-GTP activeert fosfodiësterase (PDE6), dat cGMP hydrolyseert tot 5'-GMP, waardoor cGMP-gestuurde Na⁺/Ca²⁺-kanalen sluiten en de cel hyperpolariseert. Transducine is een opsine-specifiek G-proteïne van de Gi-familie." },
+    { term: "MAPK cascade", uitleg: "De mitogen-activated protein kinase (MAPK) cascade is een sequentieel kinase-signaleringspad waarbij een groeifactor-receptor (bv. EGF-receptor, RTK) via Ras een cascade van kinasen activeert: Raf (MAP3K) → MEK (MAP2K) → ERK (MAPK). Elke kinase fosforyleert en activeert de volgende. ERK transloceert naar de kern en fosforyleert transcriptiefactoren (bv. Elk-1, Fos) die gen­expressie voor celproliferatie, differentiatie en overleving reguleren. Mutaties in Ras of Raf worden frequent gevonden in kanker." },
+  ]},
+  { chapter: "H13 – Bio-energetische principes", begrippen: [
+    { term: "Fosforyleringspotentiaal", uitleg: "De fosforyleringspotentiaal (ΔGp) is de vrije energie die beschikbaar is bij de hydrolyse van ATP onder fysiologische condities: ΔGp = ΔG°' + RT ln ([ADP][Pi]/[ATP]). In een cel is [ATP] hoog en [ADP],[Pi] laag, waardoor ΔGp veel groter is (negatiever, typisch -50 tot -65 kJ/mol) dan de standaard ΔG°' (-30.5 kJ/mol). De fosforyleringspotentiaal weerspiegelt de mate waarop een cel de energiestatus van het ATP/ADP-systeem handhaaft en drijft endergone reacties aan." },
+  ]},
+  { chapter: "H14 – Glycolyse, gluconeogenese, pentosefosfaatpad", begrippen: [
+    { term: "Fermentatie", uitleg: "Fermentatie is anaerobe oxidatie van glucose waarbij organische moleculen als eindacceptoren van elektronen (reducerende equivalenten) fungeren in plaats van O₂. Bij melkzuurfermentatie (bv. spiercellen, lactobacillen) wordt pyruvaat gereduceerd tot lactaat door lactaatdehydrogenase, waardoor NAD⁺ wordt geregenereerd voor de glycolyse. Bij alcoholische fermentatie (gisten) wordt pyruvaat via acetaldehyde omgezet naar ethanol. Netto-ATP-opbrengst is slechts 2 ATP/glucose, tegenover 30-32 bij aerobe oxidatie." },
+    { term: "α-Amylase", uitleg: "α-Amylase is een hydrolase (EC 3.2.1.1) dat α-1,4-glycosidische bindingen in zetmeel en glycogeen endolytisch klieft, waarbij maltose en oligosacchariden vrijkomen. Speeksel-amylase (ptyaline) start de koolhydraatvertering in de mond; pancreatisch amylase vervolgt dit in de dunne darm. α-Amylase gaat over de α-1,6-vertakkingspunten heen en klieft niet, maar botst erop. Het vereist Ca²⁺ als cofactor voor stabiliteit. Serumamylase is een klinische marker voor pancreatitis." },
+    { term: "Glycogeen / zetmeel", uitleg: "Glycogeen is het dierlijk reservepolysaccharide van glucose, sterk vertakt via α-1,4-glycosidische bindingen (lineaire ketens) en α-1,6-bindingen (vertakkingspunten elke ~8-12 residuen). Het is opgeslagen in lever (glucosehomeostase) en spier (lokale energiebron). Zetmeel is het plantaardige equivalent, bestaande uit amylose (lineair, α-1,4) en amylopectine (vertakt, α-1,6). De hoge vertakkingsgraad van glycogeen zorgt voor veel niet-reducerende uiteinden en daarmee snelle mobilisatie." },
+    { term: "Cori-cyclus", uitleg: "De Cori-cyclus beschrijft de metabole samenwerking tussen spier en lever. In hard werkende spieren wordt lactaat (via fermentatie) geproduceerd en vrijgesteld in het bloed. In de lever wordt lactaat opgenomen en via gluconeogenese omgezet naar glucose, dat terugkeert naar de spier. De cyclus redistribueert de metabole last: de spier gebruikt anaerobe glycolyse (2 ATP/glucose), maar de lever investeert 6 ATP om lactaat terug naar glucose te converteren. Dit maakt voortdurende spieractiviteit mogelijk zonder zuurstof." },
+  ]},
+  { chapter: "H16 – Citroenzuurcyclus", begrippen: [
+    { term: "Substrate channeling", uitleg: "Substrate channeling (substraatkanalisatie) is het direct doorgeven van een reactietussenkoppeling van het actieve centrum van één enzym naar dat van het volgende, zonder dat het intermediair vrij in oplossing vrijkomt. Dit verhoogt de efficiëntie, voorkomt verlies van instabiele intermediairs en vermijdt verdunning. Een bekend voorbeeld is het pyruvaatdehydrogenase-multienzymcomplex (PDC): acetyl-CoA, NADH en CO₂ worden stap voor stap geproduceerd terwijl het substraat vastzit aan lipoamide-armen die zwaaien tussen de actieve centra." },
+    { term: "Amfibole reacties", uitleg: "Amfibole reacties (van het Griekse 'amfibios', dubbelzijdig) zijn reacties in metabole routes die zowel katabole als anabole functies vervullen. De citroenzuurcyclus is het klassieke voorbeeld: hij oxideert acetyl-CoA voor energieopwekking (katabolisme) én levert biosynthetische precursoren zoals oxaloacetaat (gluconeogenese, aspartaatsynthese), α-ketoglutaraat (glutamaatsynthese), en succinyl-CoA (heembiosynthese). De amfibole rol verklaart waarom de cyclus strak wordt gereguleerd." },
+    { term: "Anaplerotische reacties", uitleg: "Anaplerotische reacties ('aanvullende' reacties) herstellen de concentraties van citroenzuurcyclusintermediairs die voor biosyntheseroutines worden onttrokken. De belangrijkste anaplerotische reactie in dieren is de carboxylering van pyruvaat naar oxaloacetaat door pyruvaatcarboxylase (biotine-afhankelijk, geactiveerd door acetyl-CoA). Andere voorbeelden: fosfo-enolpyruvaat-carboxylase in planten; propionyl-CoA → succinyl-CoA (oneven vetzuren); glutamaat → α-ketoglutaraat. Ze zijn essentieel om de cyclus draaiende te houden." },
+    { term: "Glyoxylaatcyclus", uitleg: "De glyoxylaatcyclus is een modificatie van de citroenzuurcyclus in bepaalde planten, schimmels en bacteriën (niet in dieren) die netto omzetting van acetyl-CoA naar succinaat (en uiteindelijk glucose) mogelijk maakt. Ze omvat twee extra enzymen: isocitraat-lyase (isocitraat → succinaat + glyoxylaat) en malaat-synthase (glyoxylaat + acetyl-CoA → malaat). Zo worden twee acetyl-CoA's 'bespaard' voor biosynthese. Stelt organismen in staat om vetten of acetaat als enige koolstofbron te gebruiken voor gluconeogenese." },
+  ]},
+  { chapter: "H17 – Vetzuurkatabolisme", begrippen: [
+    { term: "Chylomicron", uitleg: "Chylomicronen zijn grote lipoproteïnepartikels (diameter 75-1200 nm) die in de dunne darm worden geassembleerd door enterocyten. Ze vervoeren dieetlipiden (triglyceriden, cholesterol, vetoplosbare vitaminen) via de lymfe naar de bloedsomloop. Hun kerneiwit is apolipoproteïne B-48. In de perifere weefsels worden triglyceriden gehydrolyseerd door lipoproteïnelipase (LPL) aan endotheliale cellen, waarbij vetzuren vrijkomen voor energie of opslag. Chylomicronresten worden door de lever opgenomen via ApoE-receptoren." },
+    { term: "Perilipine", uitleg: "Perilipinen zijn een familie van lipide-druppel-geassocieerde eiwitten (PAT-familie) die lipidendruppels in adipocyten en andere cellen coaten. Ze beschermen triglyceriden tegen niet-gestimuleerde hydrolyse door lipases. Bij hormonale stimulatie (bv. epinefrine → cAMP → PKA) wordt perilipine gefosforyleerd door PKA, waardoor het van de druppel loskomt en hormoon-gevoelig lipase (HSL) en adipose triglyceride lipase (ATGL) toegang krijgen, wat lipolyse stimuleert. Ze zijn daarmee sleutelregulatoren van vetzuurmobilisatie." },
+    { term: "Carnitine", uitleg: "Carnitine (L-carnitine, β-hydroxy-γ-trimethylaminoboterzuur) is essentieel voor het transport van lange-keten vetzuren van het cytosol naar de mitochondriale matrix voor β-oxidatie. Acyl-CoA wordt door carnitine-acyltransferase I (CPT-I) op de buitenste mitochondriale membraan omgezet in acylcarnitine, dat via een antiporter (carnitine-acylcarnitine-translocase) door de binnenste mitochondriale membraan wordt getransporteerd en in de matrix opnieuw omgezet naar acyl-CoA door CPT-II. Malonyl-CoA remt CPT-I en coördineert zo synthese en afbraak." },
+    { term: "Ketolichaampjes", uitleg: "Ketone bodies (ketolichaampjes) zijn acetoacetaat, β-hydroxybutyraat en aceton, geproduceerd in de levermitochondria uit acetyl-CoA wanneer het oxaloacetaat-aanbod laag is (vasten, diabetes, koolhydraatarme diëten). Ze worden naar de bloed uitgescheiden, opgenomen door het brein, hart en spier, en omgezet terug naar acetyl-CoA voor oxidatie in de citroenzuurcyclus. De lever kan ze zelf niet oxideren (gebrek aan succinyl-CoA:acetoacetaat-CoA-transferase). Overmatige aanmaak leidt tot ketoacidose." },
+    { term: "Acidose", uitleg: "Acidose is een pathologische toestand waarbij de bloedplasma-pH daalt onder 7.35 (normaal 7.35-7.45). Metabole acidose kan optreden bij overmatige productie van zuren, bv. ketoacidose (diabetes type 1, vasten: overproductie van acetoacetaat en β-hydroxybutyraat) of lactaatacidose (hypoxie). De dalende pH vermindert de activiteit van pH-gevoelige enzymen en kan cellulaire functies ernstig verstoren. Compensatiemechanismen zijn verhoogde ademhaling (CO₂ uitademen) en renale bicarbonaatretentie." },
+  ]},
+  { chapter: "H18 – Aminozuuroxidatie", begrippen: [
+    { term: "Pepsinogeen", uitleg: "Pepsinogeen is het inactieve zymogeen (voorloperenzym) van pepsine, geproduceerd en uitgescheiden door hoofdcellen (chief cells) in de maagmucosa. In het zure milieu van de maag (pH ~2) wordt het N-terminale prosegment (44 aminozuren) autocatalytisch of door al aanwezig pepsine proteolytisch verwijderd, waardoor het actieve pepsine vrijkomt. Dit activeringssysteem (zymogeen-activering) voorkomt dat pepsine de cellen die het produceren zelf afbreekt en vertegenwoordigt een klassiek voorbeeld van proteolytische activering." },
+    { term: "Glucose-alanine cyclus", uitleg: "De glucose-alanine cyclus (Cahill-cyclus) beschrijft de samenwerking tussen spier en lever bij aminozuurstikstofuitscheiding tijdens katabolisme. In de spier worden aminozuren getransamideerd: de aminogroep wordt overgedragen naar pyruvaat om alanine te vormen (via alaninetransaminase). Alanine wordt via het bloed naar de lever vervoerd, waar de aminogroep in de ureumcyclus wordt verwerkt en pyruvaat via gluconeogenese teruggezet wordt naar glucose, dat opnieuw naar de spier gaat. De cyclus verplaatst stikstof veilig van spier naar lever." },
+  ]},
+  { chapter: "H19 – Oxidatieve fosforylering", begrippen: [
+    { term: "Elektrochemische potentiaal", uitleg: "De elektrochemische potentiaal (of protonenbeweegkracht, PMF) over de binnenste mitochondriale membraan is de drijvende kracht voor ATP-synthese door ATP-synthase. Ze wordt opgebouwd door de elektronentransportketen die protonen van de matrix naar de intermembraanruimte pompt. PMF bestaat uit twee componenten: de chemische component (ΔpH, concentratieverschil van H⁺) en de elektrische component (ΔΨ, membraanpotentiaal, typisch -180 mV, negatief in de matrix). ΔG voor protonen-reïmport = -F·ΔΨ - 2.3RT·ΔpH per mol H⁺." },
+    { term: "Reactieve zuurstofspecies (ROS)", uitleg: "Reactieve zuurstofspecies (ROS) zijn chemisch reactieve moleculen die partieel gereduceerde vormen van O₂ omvatten: superoxide-anionradicaal (O₂•⁻), waterstofperoxide (H₂O₂) en hydroxylradicaal (•OH). Ze worden geproduceerd als bijproducten van de elektronentransportketen (lekken bij Complex I en III) en door enzymen zoals NADPH-oxidase (in fagocyten). ROS beschadigen DNA, eiwitten en lipiden. Cellen bezitten antioxidante verdedigingen: superoxidedismutase (SOD), catalase, glutathionperoxidase en niet-enzymatische antioxidanten (vitamine C, E)." },
+  ]},
+  { chapter: "H20 – Fotofosforylering", begrippen: [
+    { term: "Light harvesting complex", uitleg: "Het light-harvesting complex (LHC, ook: antennasysteem) is een pigment-eiwitcomplex in fotosynthetische membranen dat lichtenergie absorbeert over een breed spectrum en de excitatie-energie via resonantie-energieoverdracht (Förster-resonantie) richt naar het reactiecentrum. In planten omvat LHC-II chlorofyl a, chlorofyl b en carotenoïden; het is geassocieerd met fotosysteem II. Het vergroot het effectieve opvangoppervlak aanzienlijk. Excitatieenergie beweegt in picoseconden van pigment naar pigment totdat het reactiecentrum bereikt wordt." },
+    { term: "Cyclisch elektronentransport", uitleg: "Cyclisch elektronentransport (cyclisch fosforyleringspad) omvat het terugstromen van elektronen van ferredoxine terug via plastoquinon en het cytochroom b6f-complex naar P700 (PSI reactiecentrum), zonder betrokkenheid van fotosysteem II of productie van NADPH en O₂. Hierdoor worden extra protonen gepompt voor extra ATP-synthese zonder NADPH-productie. Dit is nuttig wanneer de cel meer ATP dan NADPH nodig heeft, bv. bij CO₂-fixatie in het Calvin-Benson-cyclus dat 3 ATP en 2 NADPH per CO₂ vereist." },
+    { term: "Fotorespiratie", uitleg: "Fotorespiratie treedt op wanneer RuBisCO O₂ fixeert in plaats van CO₂ (de oxygenase-activiteit), waarbij fosfoglycolaat gevormd wordt. Fosfoglycolaat wordt via de C2-oxidatieve cyclus (fotorespiratie) verwerkt in chloroplasten, peroxisomen en mitochondria, waarbij CO₂ en NH₃ vrijkomen. Dit is energetisch verspillend (verbruikt ATP en reducerende equivalenten) en vermindert de netto koolstoffixatie. Bij hoge temperatuur en lage CO₂/hoge O₂-verhouding (bv. bij gesloten stomata) neemt fotorespiratie sterk toe." },
+    { term: "C4-metabolisme in planten", uitleg: "C4-planten (bv. maïs, suikerriet) hebben een anatomische en biochemische aanpassing (Kranz-anatomie) om CO₂ te concentreren rond RuBisCO en zo fotorespiratie te minimaliseren. In mesofylcellen fixeert PEP-carboxylase CO₂ tot oxaloacetaat (C4), dat wordt omgezet tot malaat of aspartaat en getransporteerd naar bundelschildcellen. Daar wordt CO₂ vrijgesteld voor de Calvin-cyclus en valt RuBisCO bloot aan hoge [CO₂]/[O₂]-verhouding. C4-planten zijn efficiënter bij hoge temperatuur, lage CO₂ en intense belichting." },
+    { term: "Ferredoxine", uitleg: "Ferredoxine is een klein, ijzer-zwavel (Fe-S)-eiwit dat als elektron-carrier fungeert aan de stromazijde van fotosysteem I in chloroplasten. Het aanvaardt één elektron tegelijk van het P700-reactiecentrum (via ferredoxine-NADP⁺-reductase geeft het uiteindelijk elektronen door aan NADP⁺ om NADPH te vormen) en kan ook elektronen leveren aan andere acceptoren, zoals in de cyclische elektronenstroom of voor de reductie van nitriet. Het Fe-S-cluster wisselt tussen Fe²⁺ en Fe³⁺ als redox-mechanisme." },
+  ]},
+];
+
+let currentChapter = 0;
+let searchMode = false;
+
+function renderChapters() {
+  const nav = document.getElementById('chapterNav');
+  nav.innerHTML = '';
+  data.forEach((ch, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'ch-btn' + (i === currentChapter && !searchMode ? ' active' : '');
+    btn.textContent = 'H' + ch.chapter.split('–')[0].replace('H','');
+    btn.title = ch.chapter;
+    btn.onclick = () => { currentChapter = i; searchMode = false; document.getElementById('search').value = ''; renderBegrippen(); renderChapters(); };
+    nav.appendChild(btn);
+  });
+}
+
+function renderBegrippen(begrippen, title) {
+  const list = document.getElementById('begrippen');
+  const titleEl = document.getElementById('chapterTitle');
+  const noResults = document.getElementById('noResults');
+  const items = begrippen || data[currentChapter].begrippen;
+  titleEl.textContent = title || data[currentChapter].chapter;
+  list.innerHTML = '';
+  if (items.length === 0) { noResults.style.display='block'; return; }
+  noResults.style.display = 'none';
+  items.forEach((b, i) => {
+    const card = document.createElement('div');
+    card.className = 'begrip-card';
+    card.innerHTML = `<div class="begrip-header" onclick="toggle(this)"><span class="begrip-term">${b.term}</span><span class="begrip-arrow">▶</span></div><div class="begrip-body">${b.uitleg}</div>`;
+    list.appendChild(card);
+  });
+}
+
+function toggle(header) {
+  const arrow = header.querySelector('.begrip-arrow');
+  const body = header.nextElementSibling;
+  body.classList.toggle('open');
+  arrow.classList.toggle('open');
+}
+
+function filterBegrippen() {
+  const q = document.getElementById('search').value.toLowerCase().trim();
+  if (!q) { searchMode = false; renderBegrippen(); renderChapters(); return; }
+  searchMode = true;
+  renderChapters();
+  const results = [];
+  data.forEach(ch => ch.begrippen.forEach(b => {
+    if (b.term.toLowerCase().includes(q) || b.uitleg.toLowerCase().includes(q)) results.push(b);
+  }));
+  renderBegrippen(results, `Zoekresultaten voor "${q}" (${results.length})`);
+}
+
+renderChapters();
+renderBegrippen();
+</script>
